@@ -1,0 +1,118 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Get version
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Build binaries
+        run: |
+          # Linux AMD64
+          GOOS=linux GOARCH=amd64 go build -ldflags="-s -w -X main.version=${{ steps.get_version.outputs.VERSION }}" -o sopan-linux-amd64
+          
+          # Linux ARM64
+          GOOS=linux GOARCH=arm64 go build -ldflags="-s -w -X main.version=${{ steps.get_version.outputs.VERSION }}" -o sopan-linux-arm64
+          
+          # Windows AMD64
+          GOOS=windows GOARCH=amd64 go build -ldflags="-s -w -X main.version=${{ steps.get_version.outputs.VERSION }}" -o sopan-windows-amd64.exe
+          
+          # Windows ARM64
+          GOOS=windows GOARCH=arm64 go build -ldflags="-s -w -X main.version=${{ steps.get_version.outputs.VERSION }}" -o sopan-windows-arm64.exe
+          
+          # macOS AMD64
+          GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w -X main.version=${{ steps.get_version.outputs.VERSION }}" -o sopan-darwin-amd64
+          
+          # macOS ARM64 (Apple Silicon)
+          GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w -X main.version=${{ steps.get_version.outputs.VERSION }}" -o sopan-darwin-arm64
+          
+          # FreeBSD AMD64
+          GOOS=freebsd GOARCH=amd64 go build -ldflags="-s -w -X main.version=${{ steps.get_version.outputs.VERSION }}" -o sopan-freebsd-amd64
+
+      - name: Create checksums
+        run: |
+          sha256sum sopan-* > checksums.txt
+          cat checksums.txt
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            sopan-linux-amd64
+            sopan-linux-arm64
+            sopan-windows-amd64.exe
+            sopan-windows-arm64.exe
+            sopan-darwin-amd64
+            sopan-darwin-arm64
+            sopan-freebsd-amd64
+            checksums.txt
+          body: |
+            ## SOPAN (SOCKS Proxy Analyzer) ${{ steps.get_version.outputs.VERSION }}
+            
+            ### Download the appropriate binary for your platform:
+            
+            **Linux:**
+            - `sopan-linux-amd64` - Linux x86_64
+            - `sopan-linux-arm64` - Linux ARM64
+            
+            **Windows:**
+            - `sopan-windows-amd64.exe` - Windows x86_64
+            - `sopan-windows-arm64.exe` - Windows ARM64
+            
+            **macOS:**
+            - `sopan-darwin-amd64` - macOS Intel
+            - `sopan-darwin-arm64` - macOS Apple Silicon (M1/M2/M3)
+            
+            **FreeBSD:**
+            - `sopan-freebsd-amd64` - FreeBSD x86_64
+            
+            ### Installation
+            
+            1. Download the binary for your platform
+            2. Make it executable (Linux/macOS/FreeBSD): `chmod +x sopan-*`
+            3. Run: `./sopan-* -h`
+            
+            ### Verify checksums
+            
+            Download `checksums.txt` and verify:
+            ```bash
+            sha256sum -c checksums.txt
+            ```
+            
+            ### Usage
+            
+            ```bash
+            # Test proxies from file
+            ./sopan -file proxies.txt -threads 20
+            
+            # Test single proxy
+            ./sopan -proxy 127.0.0.1:1080
+            
+            # Custom test URL
+            ./sopan -file proxies.txt -url https://httpbin.org/ip
+            ```
+            
+            For more information, see the [README](https://github.com/${{ github.repository }}/blob/main/README.md).
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

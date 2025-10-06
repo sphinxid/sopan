@@ -1,5 +1,10 @@
 # SOPAN (SOCKS Proxy Analyzer)
 
+[![Release](https://img.shields.io/github/v/release/sphinxid/sopan)](https://github.com/sphinxid/sopan/releases)
+[![Test](https://github.com/sphinxid/sopan/actions/workflows/test.yml/badge.svg)](https://github.com/sphinxid/sopan/actions/workflows/test.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/sphinxid/sopan)](https://goreportcard.com/report/github.com/sphinxid/sopan)
+[![License](https://img.shields.io/github/license/sphinxid/sopan)](LICENSE)
+
 **SOPAN** stands for **SOCKS Proxy Analyzer** - also an Indonesian word meaning "polite/courteous"
 
 A fast, multithreaded SOCKS proxy tester written in Go that supports both authenticated and non-authenticated proxies.
@@ -17,8 +22,23 @@ A fast, multithreaded SOCKS proxy tester written in Go that supports both authen
 
 ## Installation
 
+### Option 1: Download Pre-built Binary (Recommended)
+
+Download the latest release for your platform from the [Releases page](https://github.com/sphinxid/sopan/releases).
+
 ```bash
-# Clone or download the project
+# Linux/macOS/FreeBSD - make it executable
+chmod +x sopan-*
+
+# Run
+./sopan-* -h
+```
+
+### Option 2: Build from Source
+
+```bash
+# Clone the repository
+git clone https://github.com/sphinxid/sopan.git
 cd sopan
 
 # Download dependencies
@@ -198,6 +218,27 @@ GOOS=linux GOARCH=amd64 go build -o sopan-linux
 GOOS=windows GOARCH=amd64 go build -o sopan.exe
 GOOS=darwin GOARCH=amd64 go build -o sopan-mac
 ```
+
+## Releases
+
+Pre-built binaries are available for download from the [Releases page](https://github.com/sphinxid/sopan/releases).
+
+### Creating a New Release
+
+To create a new release with automated binary builds:
+
+```bash
+# Tag the release
+git tag -a v1.0.0 -m "Release v1.0.0"
+
+# Push the tag to GitHub
+git push origin v1.0.0
+```
+
+The GitHub Actions workflow will automatically:
+- Build binaries for Linux, Windows, macOS, and FreeBSD (AMD64 and ARM64)
+- Generate SHA256 checksums
+- Create a GitHub release with all binaries attached
 
 ## Troubleshooting
 
