@@ -223,23 +223,6 @@ GOOS=darwin GOARCH=amd64 go build -o sopan-mac
 
 Pre-built binaries are available for download from the [Releases page](https://github.com/sphinxid/sopan/releases).
 
-### Creating a New Release
-
-To create a new release with automated binary builds:
-
-```bash
-# Tag the release
-git tag -a v1.0.0 -m "Release v1.0.0"
-
-# Push the tag to GitHub
-git push origin v1.0.0
-```
-
-The GitHub Actions workflow will automatically:
-- Build binaries for Linux, Windows, macOS, and FreeBSD (AMD64 and ARM64)
-- Generate SHA256 checksums
-- Create a GitHub release with all binaries attached
-
 ## Troubleshooting
 
 **Problem**: "connection refused" errors  
