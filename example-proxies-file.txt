@@ -1,0 +1,15 @@
+# SOCKS Proxy List Example
+# Format: [username:password@]host:port
+# Lines starting with # are comments
+
+# SOCKS5 proxies without authentication
+127.0.0.1:1080
+192.168.1.100:1080
+socks5://10.0.0.1:1080
+
+# SOCKS5 proxies with authentication
+username:password@proxy.example.com:1080
+socks5://user:pass@192.168.1.200:1080
+admin:secret123@10.10.10.10:9050
+
+# Add your proxies below:
